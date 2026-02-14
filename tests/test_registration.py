@@ -36,11 +36,33 @@ def test_add_new_user(setup_database, connection):
     user = cursor.fetchone()
     assert user, "Пользователь должен быть добавлен в базу данных."
 
-# Возможные варианты тестов:
-"""
-Тест добавления пользователя с существующим логином.
-Тест успешной аутентификации пользователя.
-Тест аутентификации несуществующего пользователя.
-Тест аутентификации пользователя с неправильным паролем.
-Тест отображения списка пользователей.
-"""
+def test_same_login(setup_database, connection):
+    """Тест добавления пользователя с существующим логином."""
+    result = add_user('testuser', 'testuser@example.com', 'password123')
+    assert result == False
+
+def test_authenticate(setup_database, connection):
+    """Тест успешной аутентификации пользователя."""
+    result1 = authenticate_user('login', '12345')
+    assert result1 != None
+
+def test_authenticate_not(setup_database, connection):
+    """Тест аутентификации несуществующего пользователя."""
+    result2 = authenticate_user('logi2n', '123435')
+    assert result2 == False
+
+def test_authenticate_wrong_password(setup_database, connection):
+    """Тест аутентификации пользователя с неправильным паролем."""
+    result3 = authenticate_user('testuser', 'password1243')
+    assert result3 == False
+
+def test_for_what_is_in(setup_database, capsys, connection):
+    """Тест отображения списка пользователей."""
+    display_users()
+    captured = capsys.readouterr()
+    assert 'login' in captured.out
+    assert 'password123' not in captured.out
+
+
+
+    
